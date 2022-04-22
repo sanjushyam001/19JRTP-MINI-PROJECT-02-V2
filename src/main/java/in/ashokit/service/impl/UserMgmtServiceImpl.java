@@ -55,12 +55,12 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 		String password=loginForm.getPassword();
 		User user= userRepo.findByEmailAndPassword(email, password);
 		if(user==null) {
-			return "Invalid Credentials";
+			return "invalid";
 		}
 		if(user.getStatus().equalsIgnoreCase("LOCKED")) {
-			return "You account locked";
+			return "locked";
 		}
-		return "SUCCESS";
+		return "valid";
 	}
 
 	@Override
@@ -127,12 +127,12 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	public String forgotPwd(String email) {
 		User user=userRepo.findByEmail(email);
 		if(user==null) {
-			return "Invalid Email";
+			return "{\"status\":\"invalid\"}";
 		}
 		// send password to email
 		String body="Your password is : "+user.getPassword();
 		emailService.sendEmail(user.getEmail(), "Password Recovered", body);
-		String value ="{\"status\":\"Your password sent to your email, sign in with new password\"}";
+		String value ="{\"status\":\"valid\"}";
 		return value;
 		
 	}
@@ -142,12 +142,12 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 		User user= userRepo.findByEmailAndPassword(unlockAccForm.getEmail(), unlockAccForm.getTempPaswd());
 		
 		if(user==null) {
-			return "Invalid temporary password";
+			return "invalid";
 		}
 		user.setPassword(unlockAccForm.getNewPaswd());
 		user.setStatus("UNLOCKED");
 		userRepo.save(user);
-		return "Account unlocked successfully..";
+		return "valid";
 		
 	}
 	
